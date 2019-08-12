@@ -103,35 +103,30 @@
         var id = "xzxx";
         var nama = "cxzzxasa";
 
-        if(checkconnection() == "online"){
-            console.log("connection oke");
-            setInterval(function () {
-                console.log('it works' + new Date());
-                $.ajax({
-                    method: "POST",
-                    url: "{{URL::to('/sync')}}",
-                    data: { 
-                        "id": id,
-                        "nama": nama,
-                        "_token": "{{ csrf_token() }}"
-                    }
-                }).done(function(e) {
-                    console.log("selesai")
-                });
+        setInterval(function () {
+            console.log('it works' + new Date());
+            if(checkconnection() == "online"){
+                console.log("connection oke");
+                    $.ajax({
+                        method: "POST",
+                        url: "{{URL::to('/sync')}}",
+                        data: { 
+                            "id": id,
+                            "nama": nama,
+                            "_token": "{{ csrf_token() }}"
+                        }
+                    }).done(function(e) {
+                        console.log("selesai")
+                    });
+                }else{
+                    console.log("connection error");
+                }
             },30000); 
-        }else{
-            console.log("connection error");
-        }
-
-
+       
 
     });
 
-    // setInterval(function () {
-    //     console.log('it works' + new Date());
-    // },30000);
-
-
+    
     function checkconnection() {
         var status = navigator.onLine;
         if (status) {

@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use DB;
 use URL;
 use App\Community;
+use File;
 class SyncServerController extends Controller
 {
     /**
@@ -28,13 +29,17 @@ class SyncServerController extends Controller
      */
     public function syncServer(Request $request)
     {
-        $pdo = DB::connection('secondary')->getPdo();
+        $txt = "";
+        $dir = public_path("/riwayat/");
+        if(!is_dir($dir)){$makeFolder = mkdir($dir , 0777, true);}
+
         DB::beginTransaction();
         try {
-            $myArray = json_decode($request->id);
-            $nama = json_decode(html_entity_decode($request->nama));//);
             $db = DB::table('wp_nci_community')->select('*')->where('status', '1')->get();
-            foreach($db AS $k => $v){
+            foreach($db AS $k => $v){ 
+                // if($txt){
+                    $txt .= date('Y-m-d H:i:s')." - ".$v->name_community.", ";
+                // }
                 $insert = Community::create([
                     'id_community' => $v->id_community,
                     'name_community' => $v->name_community,
@@ -54,6 +59,16 @@ class SyncServerController extends Controller
                 ]);
                 $update = DB::table('wp_nci_community')->where('id_community', $v->id_community)->update(['status' => '0']);
             }
+            $data = $txt;
+            $filename = $dir.'riwayat-'.date('Y-m-d');
+
+            if (file_exists($filename)) {
+                File::append($filename, $data);
+            }else{
+                File::put($filename, $data);
+            }
+            
+            
         } catch (\Illuminate\Database\QueryException $ex) {
             //throw $th;
             DB::rollback();
@@ -61,7 +76,7 @@ class SyncServerController extends Controller
             return response()->json(["data"=>"sync fail"]);
         }
         DB::commit();
-        return response()->json(["data"=>"sync done"]);
+        return response()->json(["data"=>"sync done", "sync" => $txt]);
         
 
     }

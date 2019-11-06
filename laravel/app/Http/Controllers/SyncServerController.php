@@ -60,7 +60,7 @@ class SyncServerController extends Controller
                 $update = DB::table('wp_nci_community')->where('id_community', $v->id_community)->update(['status' => '0']);
             }
             $data = $txt;
-            $filename = $dir.'riwayat-'.date('Y-m-d');
+            $filename = $dir.'riwayat-'.date('Y-m-d').".txt";
 
             if (file_exists($filename)) {
                 File::append($filename, $data);

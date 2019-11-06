@@ -16,3 +16,7 @@
 // });
 Route::get('/', 'SyncController@sync');
 Route::post('/sync', 'SyncServerController@syncServer');
+Route::get('/barcode', 'BarcodeController@index');
+Route::get('/ongkir', 'OngkirController@index');
+Route::post('/ajaxProvince', 'OngkirController@AjaxProvince');
+Route::post('/cekOngkos', 'OngkirController@cekOngkos');
